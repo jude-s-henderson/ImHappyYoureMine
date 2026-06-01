@@ -169,7 +169,7 @@ pointer-events:none;
 75%{transform:translateX(-4px);}
 }
 
-/* MAIN APP (hidden until unlocked) */
+/* MAIN APP */
 #app{
 display:none;
 }
@@ -287,7 +287,7 @@ color:#6b4c4c;
 margin-bottom:16px;
 }
 
-input,textarea{
+input,textarea,select{
 width:100%;
 margin-bottom:14px;
 padding:12px 16px;
@@ -298,9 +298,17 @@ font-family:'Lora',serif;
 font-size:0.95rem;
 color:#4a3728;
 transition:border-color 0.3s;
+-webkit-appearance:none;
+appearance:none;
 }
 
-input:focus,textarea:focus{
+select{
+background:#fdfbf8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b4c4c' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 16px center;
+padding-right:40px;
+cursor:pointer;
+}
+
+input:focus,textarea:focus,select:focus{
 outline:none;
 border-color:#d4a0a0;
 background:#fff;
@@ -331,6 +339,134 @@ transform:translateY(-2px);
 box-shadow:3px 5px 12px rgba(107,76,76,0.3);
 }
 
+/* Action buttons */
+.item-actions{
+display:flex;
+gap:8px;
+margin-top:12px;
+}
+
+.btn-edit,.btn-delete{
+padding:6px 14px;
+border:none;
+border-radius:4px;
+cursor:pointer;
+font-family:'Caveat',cursive;
+font-size:1rem;
+font-weight:600;
+transition:all 0.2s ease;
+}
+
+.btn-edit{
+background:#f0e8d8;
+color:#6b4c4c;
+}
+
+.btn-edit:hover{
+background:#e8dcc8;
+transform:translateY(-1px);
+}
+
+.btn-delete{
+background:#fce8e8;
+color:#a04040;
+}
+
+.btn-delete:hover{
+background:#f5d0d0;
+transform:translateY(-1px);
+}
+
+/* Edit modal */
+.modal-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.4);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:5000;
+opacity:0;
+transition:opacity 0.3s;
+}
+
+.modal-overlay.show{
+opacity:1;
+}
+
+.modal{
+background:#fff;
+padding:36px;
+border-radius:4px;
+max-width:500px;
+width:90%;
+box-shadow:6px 8px 30px rgba(0,0,0,0.15);
+position:relative;
+border:1px solid #f0e8e0;
+}
+
+.modal::before{
+content:'';
+position:absolute;
+top:-8px;
+left:50%;
+transform:translateX(-50%);
+width:60px;
+height:16px;
+background:rgba(180,160,130,0.4);
+border-radius:2px;
+}
+
+.modal h3{
+font-family:'Caveat',cursive;
+font-size:1.6rem;
+color:#6b4c4c;
+margin-bottom:16px;
+}
+
+.modal-btns{
+display:flex;
+gap:10px;
+margin-top:6px;
+}
+
+.btn-cancel{
+padding:12px 28px;
+border:1px solid #d4c4b0;
+border-radius:4px;
+background:#fff;
+color:#6b4c4c;
+cursor:pointer;
+font-family:'Caveat',cursive;
+font-size:1.2rem;
+font-weight:600;
+transition:all 0.2s ease;
+}
+
+.btn-cancel:hover{
+background:#fdfbf8;
+}
+
+/* Posted By Tag */
+.posted-by{
+display:inline-block;
+padding:2px 10px;
+border-radius:10px;
+font-size:0.75rem;
+font-style:italic;
+margin-top:8px;
+}
+
+.posted-by.lydia{
+background:#f5e6ee;
+color:#8b4070;
+}
+
+.posted-by.jude{
+background:#e6f0e8;
+color:#3d6b4c;
+}
+
 .photo-grid{
 display:grid;
 grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
@@ -340,10 +476,9 @@ padding:10px;
 
 .polaroid{
 background:#fff;
-padding:12px 12px 40px;
+padding:12px 12px 60px;
 box-shadow:3px 5px 15px rgba(0,0,0,0.1);
 transition:all 0.4s ease;
-cursor:pointer;
 position:relative;
 }
 
@@ -366,13 +501,19 @@ display:block;
 
 .polaroid .caption{
 position:absolute;
-bottom:10px;
+bottom:32px;
 left:12px;
 right:12px;
 font-family:'Caveat',cursive;
 font-size:1.1rem;
 color:#6b4c4c;
 text-align:center;
+}
+
+.polaroid .photo-actions{
+position:absolute;
+bottom:8px;
+right:12px;
 }
 
 .drop-zone{
@@ -516,6 +657,46 @@ z-index:1;
 background:rgba(255,255,255,0.25);
 }
 
+.cassette .posted-by{
+position:relative;
+z-index:1;
+display:block;
+margin-top:10px;
+}
+
+.cassette .posted-by.lydia{
+background:rgba(245,230,238,0.2);
+color:#f0c0d8;
+}
+
+.cassette .posted-by.jude{
+background:rgba(230,240,232,0.2);
+color:#a8d4b0;
+}
+
+.cassette .item-actions{
+position:relative;
+z-index:1;
+}
+
+.cassette .btn-edit{
+background:rgba(255,255,255,0.15);
+color:#f5e6d8;
+}
+
+.cassette .btn-edit:hover{
+background:rgba(255,255,255,0.25);
+}
+
+.cassette .btn-delete{
+background:rgba(200,80,80,0.3);
+color:#ffd0d0;
+}
+
+.cassette .btn-delete:hover{
+background:rgba(200,80,80,0.5);
+}
+
 .timeline-container{
 position:relative;
 padding-left:40px;
@@ -623,8 +804,9 @@ nav button{padding:10px 20px;font-size:1.1rem;}
 .song-grid{grid-template-columns:1fr;}
 main{padding:12px;}
 .form-card{padding:20px;}
-.polaroid{padding:8px 8px 30px;}
+.polaroid{padding:8px 8px 55px;}
 .lock-card{padding:40px 24px;}
+.modal{padding:24px;}
 }
 </style>
 </head>
@@ -668,6 +850,11 @@ main{padding:12px;}
 </main>
 
 <div class="toast" id="toast"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+<div class="modal" id="modalContent"></div>
 </div>
 
 <script>
@@ -725,6 +912,39 @@ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'))
 document.getElementById('nav-'+section).classList.add('active');
 }
 
+function postedByTag(name){
+if(!name)return '';
+const lower=name.toLowerCase();
+return `<span class="posted-by ${lower}">— ${safe(name)}</span>`;
+}
+
+function postedBySelect(id){
+return `<select id="${id}">
+<option value="">who's posting?</option>
+<option value="Lydia">Lydia</option>
+<option value="Jude">Jude</option>
+</select>`;
+}
+
+/* ===== MODAL ===== */
+function openModal(html){
+const overlay=document.getElementById('modalOverlay');
+document.getElementById('modalContent').innerHTML=html;
+overlay.style.display='flex';
+setTimeout(()=>overlay.classList.add('show'),10);
+}
+
+function closeModal(){
+const overlay=document.getElementById('modalOverlay');
+overlay.classList.remove('show');
+setTimeout(()=>{overlay.style.display='none';},300);
+}
+
+document.getElementById('modalOverlay').addEventListener('click',function(e){
+if(e.target===this)closeModal();
+});
+
+/* ===== LOAD SECTIONS ===== */
 async function loadSection(type){
 currentSection=type;
 setActiveNav(type);
@@ -743,15 +963,24 @@ el.innerHTML=`
 <input type="file" id="photoFile" accept="image/*" style="display:none">
 </div>
 <input type="text" id="photoCaption" placeholder="write a caption...">
+${postedBySelect('photoPostedBy')}
 <button class="btn" onclick="uploadPhoto()">paste it in ♡</button>
 </div>
 <div class="photo-grid">
-${files.map(x=>`
+${files.map(x=>{
+const parts=x.name.replace(/\.[^.]+$/,'').split('-');
+const postedBy=parts.length>2?parts[parts.length-1]:'';
+const displayName=(postedBy==='Lydia'||postedBy==='Jude')?postedBy:'';
+const captionText=parts.slice(1,displayName?-1:undefined).join('-').replace(/_/g,' ');
+return `
 <div class="polaroid">
 <img src="${SUPABASE_URL}/storage/v1/object/public/pictures/${encodeURIComponent(x.name)}" alt="memory" loading="lazy">
-<div class="caption">${safe(x.name.replace(/^\d+-/,'').replace(/\.[^.]+$/,''))}</div>
+<div class="caption">${safe(captionText)}${displayName?' '+postedByTag(displayName):''}</div>
+<div class="photo-actions">
+<button class="btn-delete" onclick="deletePhoto('${x.name.replace(/'/g,"\\'")}')">delete</button>
 </div>
-`).join('')}
+</div>`;
+}).join('')}
 </div>`;
 initDropZone();
 }
@@ -763,13 +992,21 @@ el.innerHTML=`
 <h3>write a poem ✦</h3>
 <input type="text" id="poemTitle" placeholder="give it a title...">
 <textarea id="poemContent" rows="8" placeholder="pour your heart out here..."></textarea>
+${postedBySelect('poemPostedBy')}
 <button class="btn" onclick="savePoem()">save this poem ♡</button>
 </div>
 ${(res.data||[]).map(p=>`
 <div class="poem-page">
 <h3>${safe(p.title)}</h3>
 <div class="poem-text">${safe(p.content)}</div>
-<div class="poem-date">${p.created_at?new Date(p.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):''}</div>
+<div class="poem-date">
+${p.created_at?new Date(p.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):''}
+${postedByTag(p.posted_by)}
+</div>
+<div class="item-actions">
+<button class="btn-edit" onclick='editPoem(${JSON.stringify(p).replace(/'/g,"&#39;")})'>edit</button>
+<button class="btn-delete" onclick="deletePoem('${p.id}')">delete</button>
+</div>
 </div>
 `).join('')}`;
 }
@@ -782,6 +1019,7 @@ el.innerHTML=`
 <input type="text" id="songTitle" placeholder="song title...">
 <input type="text" id="songArtist" placeholder="artist...">
 <input type="text" id="songUrl" placeholder="link (spotify, youtube, etc)...">
+${postedBySelect('songPostedBy')}
 <button class="btn" onclick="saveSong()">add to mixtape ♡</button>
 </div>
 <div class="song-grid">
@@ -790,19 +1028,25 @@ ${(res.data||[]).map(s=>`
 <h3>${safe(s.title)}</h3>
 <div class="artist">${safe(s.artist)}</div>
 ${s.url?`<a href="${safe(s.url)}" target="_blank" rel="noopener">▶ listen</a>`:''}
+${postedByTag(s.posted_by)}
+<div class="item-actions">
+<button class="btn-edit" onclick='editSong(${JSON.stringify(s).replace(/'/g,"&#39;")})'>edit</button>
+<button class="btn-delete" onclick="deleteSong('${s.id}')">delete</button>
+</div>
 </div>
 `).join('')}
 </div>`;
 }
 
 if(type==='timeline'){
-const res=await client.from('timeline').select('*').order('event_date',{ascending:false});
+const res=await client.from('timeline').select('*').order('event_date',{ascending:true});
 el.innerHTML=`
 <div class="form-card">
 <h3>add a memory ✦</h3>
 <input type="text" id="timelineTitle" placeholder="what happened?">
 <textarea id="timelineDesc" rows="4" placeholder="tell the story..."></textarea>
 <input type="date" id="timelineDate">
+${postedBySelect('timelinePostedBy')}
 <button class="btn" onclick="saveTimeline()">save this memory ♡</button>
 </div>
 <div class="timeline-container">
@@ -811,12 +1055,18 @@ ${(res.data||[]).map(t=>`
 <div class="date">${t.event_date||''}</div>
 <h3>${safe(t.title)}</h3>
 <p>${safe(t.description)}</p>
+${postedByTag(t.posted_by)}
+<div class="item-actions">
+<button class="btn-edit" onclick='editTimeline(${JSON.stringify(t).replace(/'/g,"&#39;")})'>edit</button>
+<button class="btn-delete" onclick="deleteTimeline('${t.id}')">delete</button>
+</div>
 </div>
 `).join('')}
 </div>`;
 }
 }
 
+/* ===== DRAG & DROP ===== */
 function initDropZone(){
 const zone=document.getElementById('dropZone');
 const input=document.getElementById('photoFile');
@@ -840,12 +1090,16 @@ zone.querySelector('p').textContent='photo ready: '+input.files[0].name;
 });
 }
 
+/* ===== CREATE ===== */
 async function uploadPhoto(){
 const input=document.getElementById('photoFile');
 const caption=document.getElementById('photoCaption');
+const postedBy=document.getElementById('photoPostedBy').value;
 if(!input||!input.files[0]){showToast('pick a photo first!');return;}
 const file=input.files[0];
-const name=Date.now()+'-'+(caption.value||file.name).replace(/[^a-zA-Z0-9.-]/g,'_')+'.'+file.name.split('.').pop();
+const ext=file.name.split('.').pop();
+const safeCap=(caption.value||'photo').replace(/[^a-zA-Z0-9.-]/g,'_');
+const name=Date.now()+'-'+safeCap+(postedBy?'-'+postedBy:'')+'.'+ext;
 const{error}=await client.storage.from('pictures').upload(name,file);
 if(error){showToast('oops: '+error.message);return;}
 showToast('photo saved ♡');
@@ -855,8 +1109,9 @@ loadSection('photos');
 async function savePoem(){
 const title=document.getElementById('poemTitle').value.trim();
 const content=document.getElementById('poemContent').value.trim();
+const posted_by=document.getElementById('poemPostedBy').value;
 if(!title||!content){showToast('write something first!');return;}
-const{error}=await client.from('poems').insert({title,content});
+const{error}=await client.from('poems').insert({title,content,posted_by:posted_by||null});
 if(error){showToast('oops: '+error.message);return;}
 showToast('poem saved ♡');
 loadSection('poems');
@@ -866,8 +1121,9 @@ async function saveSong(){
 const title=document.getElementById('songTitle').value.trim();
 const artist=document.getElementById('songArtist').value.trim();
 const url=document.getElementById('songUrl').value.trim();
+const posted_by=document.getElementById('songPostedBy').value;
 if(!title){showToast('add a song title!');return;}
-const{error}=await client.from('songs').insert({title,artist,url});
+const{error}=await client.from('songs').insert({title,artist,url,posted_by:posted_by||null});
 if(error){showToast('oops: '+error.message);return;}
 showToast('song added ♡');
 loadSection('songs');
@@ -877,10 +1133,136 @@ async function saveTimeline(){
 const title=document.getElementById('timelineTitle').value.trim();
 const description=document.getElementById('timelineDesc').value.trim();
 const event_date=document.getElementById('timelineDate').value;
+const posted_by=document.getElementById('timelinePostedBy').value;
 if(!title){showToast('name this memory!');return;}
-const{error}=await client.from('timeline').insert({title,description,event_date:event_date||null});
+const{error}=await client.from('timeline').insert({title,description,event_date:event_date||null,posted_by:posted_by||null});
 if(error){showToast('oops: '+error.message);return;}
 showToast('memory saved ♡');
+loadSection('timeline');
+}
+
+/* ===== DELETE ===== */
+async function deletePhoto(name){
+if(!confirm('delete this photo?'))return;
+const{error}=await client.storage.from('pictures').remove([name]);
+if(error){showToast('oops: '+error.message);return;}
+showToast('photo deleted');
+loadSection('photos');
+}
+
+async function deletePoem(id){
+if(!confirm('delete this poem?'))return;
+const{error}=await client.from('poems').delete().eq('id',id);
+if(error){showToast('oops: '+error.message);return;}
+showToast('poem deleted');
+loadSection('poems');
+}
+
+async function deleteSong(id){
+if(!confirm('delete this song?'))return;
+const{error}=await client.from('songs').delete().eq('id',id);
+if(error){showToast('oops: '+error.message);return;}
+showToast('song deleted');
+loadSection('songs');
+}
+
+async function deleteTimeline(id){
+if(!confirm('delete this memory?'))return;
+const{error}=await client.from('timeline').delete().eq('id',id);
+if(error){showToast('oops: '+error.message);return;}
+showToast('memory deleted');
+loadSection('timeline');
+}
+
+/* ===== EDIT ===== */
+function editPoem(p){
+openModal(`
+<h3>edit poem ✦</h3>
+<input type="text" id="editPoemTitle" value="${safe(p.title)}">
+<textarea id="editPoemContent" rows="8">${safe(p.content)}</textarea>
+<select id="editPoemPostedBy">
+<option value="">who's posting?</option>
+<option value="Lydia" ${p.posted_by==='Lydia'?'selected':''}>Lydia</option>
+<option value="Jude" ${p.posted_by==='Jude'?'selected':''}>Jude</option>
+</select>
+<div class="modal-btns">
+<button class="btn" onclick="saveEditPoem('${p.id}')">save changes ♡</button>
+<button class="btn-cancel" onclick="closeModal()">cancel</button>
+</div>
+`);
+}
+
+async function saveEditPoem(id){
+const title=document.getElementById('editPoemTitle').value.trim();
+const content=document.getElementById('editPoemContent').value.trim();
+const posted_by=document.getElementById('editPoemPostedBy').value;
+if(!title||!content){showToast('fill it in!');return;}
+const{error}=await client.from('poems').update({title,content,posted_by:posted_by||null}).eq('id',id);
+if(error){showToast('oops: '+error.message);return;}
+closeModal();
+showToast('poem updated ♡');
+loadSection('poems');
+}
+
+function editSong(s){
+openModal(`
+<h3>edit song ✦</h3>
+<input type="text" id="editSongTitle" value="${safe(s.title)}">
+<input type="text" id="editSongArtist" value="${safe(s.artist)}">
+<input type="text" id="editSongUrl" value="${safe(s.url)}">
+<select id="editSongPostedBy">
+<option value="">who's posting?</option>
+<option value="Lydia" ${s.posted_by==='Lydia'?'selected':''}>Lydia</option>
+<option value="Jude" ${s.posted_by==='Jude'?'selected':''}>Jude</option>
+</select>
+<div class="modal-btns">
+<button class="btn" onclick="saveEditSong('${s.id}')">save changes ♡</button>
+<button class="btn-cancel" onclick="closeModal()">cancel</button>
+</div>
+`);
+}
+
+async function saveEditSong(id){
+const title=document.getElementById('editSongTitle').value.trim();
+const artist=document.getElementById('editSongArtist').value.trim();
+const url=document.getElementById('editSongUrl').value.trim();
+const posted_by=document.getElementById('editSongPostedBy').value;
+if(!title){showToast('add a title!');return;}
+const{error}=await client.from('songs').update({title,artist,url,posted_by:posted_by||null}).eq('id',id);
+if(error){showToast('oops: '+error.message);return;}
+closeModal();
+showToast('song updated ♡');
+loadSection('songs');
+}
+
+function editTimeline(t){
+openModal(`
+<h3>edit memory ✦</h3>
+<input type="text" id="editTimelineTitle" value="${safe(t.title)}">
+<textarea id="editTimelineDesc" rows="4">${safe(t.description)}</textarea>
+<input type="date" id="editTimelineDate" value="${t.event_date||''}">
+<select id="editTimelinePostedBy">
+<option value="">who's posting?</option>
+<option value="Lydia" ${t.posted_by==='Lydia'?'selected':''}>Lydia</option>
+<option value="Jude" ${t.posted_by==='Jude'?'selected':''}>Jude</option>
+</select>
+<div class="modal-btns">
+<button class="btn" onclick="saveEditTimeline('${t.id}')">save changes ♡</button>
+<button class="btn-cancel" onclick="closeModal()">cancel</button>
+</div>
+`);
+}
+
+async function saveEditTimeline(id){
+const title=document.getElementById('editTimelineTitle').value.trim();
+const description=document.getElementById('editTimelineDesc').value.trim();
+const event_date=document.getElementById('editTimelineDate').value;
+const posted_by=document.getElementById('editTimelinePostedBy').value;
+if(!title){showToast('name it!');return;}
+const{error}=await client.from('timeline').update({title,description,event_date:event_date||null,posted_by:posted_by||null}).eq('id',id);
+if(error){showToast('oops: '+error.message);return;}
+closeModal();
+showToast('memory updated ♡');
 loadSection('timeline');
 }
 </script>
