@@ -1,3 +1,5 @@
+Here's the complete index.html with all the missing code restored:
+
 
 <!DOCTYPE html>
 <html>
@@ -1062,8 +1064,7 @@ if(!on){clearInterval(petalInterval);petalInterval=null;document.querySelectorAl
 }
 
 /* ===== COUNTDOWN ===== */
-// SET YOUR ANNIVERSARY DATE HERE (month is 0-indexed)
-const ANNIVERSARY_MONTH=3; // April (0=Jan)
+const ANNIVERSARY_MONTH=3;
 const ANNIVERSARY_DAY=27;
 
 let countdownInterval=null;
@@ -1428,9 +1429,14 @@ if(e.dataTransfer.files.length){input.files=e.dataTransfer.files;zone.querySelec
 input.addEventListener('change',()=>{if(input.files.length)zone.querySelector('p').textContent='photo ready: '+input.files[0].name;});
 }
 
-/* ===== CREATE ===== */
+/* ===== PHOTOS ===== */
 async function uploadPhoto(){
 const input=document.getElementById('photoFile');
 const caption=document.getElementById('photoCaption');
 const postedBy=document.getElementById('photoPostedBy').value;
-if(!input||!
+if(!input||!input.files||!input.files.length){showToast('pick a photo first!');return;}
+const file=input.files[0];
+const ext=file.name.split('.').pop();
+const timestamp=Date.now();
+const captionSlug=(caption.value.trim()||'memory').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+const fileName=timestamp+'-'+captionSlug+(postedBy?'-'+
