@@ -202,6 +202,12 @@ letter-spacing:1px;
 text-shadow:1px 1px 2px rgba(107,76,76,0.1);
 }
 
+h1 .mine-trigger{
+cursor:default;
+-webkit-user-select:none;
+user-select:none;
+}
+
 header p{
 font-family:'Caveat',cursive;
 font-size:1.3rem;
@@ -403,6 +409,8 @@ width:90%;
 box-shadow:6px 8px 30px rgba(0,0,0,0.15);
 position:relative;
 border:1px solid #f0e8e0;
+max-height:90vh;
+overflow-y:auto;
 }
 
 .modal::before{
@@ -763,6 +771,90 @@ color:#5a4040;
 font-size:0.95rem;
 }
 
+/* SECRET PAGE */
+.secret-header{
+text-align:center;
+margin-bottom:30px;
+}
+
+.secret-header h2{
+font-family:'Caveat',cursive;
+font-size:2.5rem;
+color:#6b4c4c;
+}
+
+.secret-header p{
+font-family:'Lora',serif;
+font-size:0.9rem;
+color:#a08080;
+font-style:italic;
+margin-top:6px;
+}
+
+.secret-back{
+padding:10px 20px;
+border:1px dashed #d4c4b0;
+border-radius:4px;
+background:transparent;
+color:#a08080;
+cursor:pointer;
+font-family:'Caveat',cursive;
+font-size:1.1rem;
+transition:all 0.2s;
+margin-top:20px;
+}
+
+.secret-back:hover{
+background:#fef5f0;
+color:#6b4c4c;
+border-color:#d4a0a0;
+}
+
+.note-card{
+background:#fffef5;
+padding:24px 28px;
+margin-bottom:20px;
+border-radius:2px;
+box-shadow:2px 3px 8px rgba(0,0,0,0.05);
+border:1px solid #f0eadc;
+position:relative;
+transition:all 0.3s ease;
+}
+
+.note-card::before{
+content:'';
+position:absolute;
+top:0;
+left:0;
+right:0;
+height:3px;
+background:linear-gradient(90deg,#e8d8c8,#f0e0d0,#e8d8c8);
+}
+
+.note-card:hover{
+transform:translateY(-2px);
+box-shadow:3px 5px 12px rgba(0,0,0,0.08);
+}
+
+.note-card .note-text{
+white-space:pre-wrap;
+font-family:'Lora',serif;
+color:#5a4040;
+font-size:0.95rem;
+line-height:1.8;
+}
+
+.note-card .note-date{
+font-size:0.75rem;
+color:#b8a898;
+margin-top:10px;
+font-style:italic;
+}
+
+.note-card .item-actions{
+margin-top:10px;
+}
+
 .toast{
 position:fixed;
 bottom:30px;
@@ -835,9 +927,9 @@ main{padding:12px;}
 <div class="flower flower-3">✿</div>
 
 <header>
-<h1>I'm Happy You're Mine</h1>
+<h1>I'm Happy You're <span class="mine-trigger" id="mineTrigger">Mine</span></h1>
 <p>our little scrapbook of everything</p>
-<nav>
+<nav id="mainNav">
 <button id="nav-photos" class="active" onclick="loadSection('photos')">Photos</button>
 <button id="nav-poems" onclick="loadSection('poems')">Poems</button>
 <button id="nav-songs" onclick="loadSection('songs')">Songs</button>
@@ -891,6 +983,20 @@ loadSection('photos');
 },600);
 }
 
+/* ===== SECRET PAGE TRIGGER ===== */
+let mineClickCount=0;
+let mineClickTimer=null;
+
+document.getElementById('mineTrigger').addEventListener('click',function(){
+mineClickCount++;
+clearTimeout(mineClickTimer);
+mineClickTimer=setTimeout(()=>{mineClickCount=0;},2000);
+if(mineClickCount>=5){
+mineClickCount=0;
+loadSecret();
+}
+});
+
 /* ===== SUPABASE ===== */
 const SUPABASE_URL="https://kwldzepxrbgtcjtlmpfj.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3bGR6ZXB4cmJndGNqdGxtcGZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNjI2OTgsImV4cCI6MjA5NTgzODY5OH0.VjhWLkg9Ex-eO2B9aFKEcsgT9FuDyMuXeRwHHlTx7_o";
@@ -909,7 +1015,8 @@ setTimeout(()=>t.classList.remove('show'),2500);
 
 function setActiveNav(section){
 document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-document.getElementById('nav-'+section).classList.add('active');
+const btn=document.getElementById('nav-'+section);
+if(btn)btn.classList.add('active');
 }
 
 function postedByTag(name){
@@ -944,10 +1051,90 @@ document.getElementById('modalOverlay').addEventListener('click',function(e){
 if(e.target===this)closeModal();
 });
 
+/* ===== SECRET PAGE ===== */
+async function loadSecret(){
+currentSection='secret';
+setActiveNav('');
+document.getElementById('mainNav').style.display='none';
+const el=document.getElementById('content');
+el.style.opacity='0';
+setTimeout(()=>{el.style.transition='opacity 0.4s';el.style.opacity='1';},50);
+
+const res=await client.from('secret_notes').select('*').order('created_at',{ascending:false});
+
+el.innerHTML=`
+<div class="secret-header">
+<h2>My Little Thoughts</h2>
+<p>just things i want to say but haven't yet...</p>
+</div>
+<div class="form-card">
+<h3>write a thought ✦</h3>
+<textarea id="secretNote" rows="5" placeholder="what's on your mind?"></textarea>
+<button class="btn" onclick="saveSecret()">keep this thought ♡</button>
+</div>
+${(res.data||[]).map(n=>`
+<div class="note-card">
+<div class="note-text">${safe(n.content)}</div>
+<div class="note-date">${n.created_at?new Date(n.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):''}</div>
+<div class="item-actions">
+<button class="btn-edit" onclick='editSecret(${JSON.stringify(n).replace(/'/g,"&#39;")})'>edit</button>
+<button class="btn-delete" onclick="deleteSecret('${n.id}')">delete</button>
+</div>
+</div>
+`).join('')}
+<div style="text-align:center;margin-top:30px;">
+<button class="secret-back" onclick="leaveSecret()">← go back to our scrapbook</button>
+</div>`;
+}
+
+function leaveSecret(){
+document.getElementById('mainNav').style.display='flex';
+loadSection('photos');
+}
+
+async function saveSecret(){
+const content=document.getElementById('secretNote').value.trim();
+if(!content){showToast('write something first!');return;}
+const{error}=await client.from('secret_notes').insert({content});
+if(error){showToast('oops: '+error.message);return;}
+showToast('thought saved ♡');
+loadSecret();
+}
+
+async function deleteSecret(id){
+if(!confirm('delete this thought?'))return;
+const{error}=await client.from('secret_notes').delete().eq('id',id);
+if(error){showToast('oops: '+error.message);return;}
+showToast('thought deleted');
+loadSecret();
+}
+
+function editSecret(n){
+openModal(`
+<h3>edit thought ✦</h3>
+<textarea id="editSecretContent" rows="5">${safe(n.content)}</textarea>
+<div class="modal-btns">
+<button class="btn" onclick="saveEditSecret('${n.id}')">save changes ♡</button>
+<button class="btn-cancel" onclick="closeModal()">cancel</button>
+</div>
+`);
+}
+
+async function saveEditSecret(id){
+const content=document.getElementById('editSecretContent').value.trim();
+if(!content){showToast('write something!');return;}
+const{error}=await client.from('secret_notes').update({content}).eq('id',id);
+if(error){showToast('oops: '+error.message);return;}
+closeModal();
+showToast('thought updated ♡');
+loadSecret();
+}
+
 /* ===== LOAD SECTIONS ===== */
 async function loadSection(type){
 currentSection=type;
 setActiveNav(type);
+document.getElementById('mainNav').style.display='flex';
 const el=document.getElementById('content');
 el.style.opacity='0';
 setTimeout(()=>{el.style.transition='opacity 0.4s';el.style.opacity='1';},50);
